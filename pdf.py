@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import PyPDF2
 import os
-    
-
 
 def remove_password(input_pdf, output_pdf, user_password):
     try:
