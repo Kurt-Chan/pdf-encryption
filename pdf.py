@@ -185,6 +185,6 @@ show_password_check.grid(row=3, column=1, sticky=tk.W, padx=5, pady=5)
 process_button = tk.Button(root, text="Encrypt PDF", command=process_file)
 decrypt_button = tk.Button(root, text="Decrypt PDF", command=decrypt_file)
 process_button.grid(row=4, column=1, pady=10)
-decrypt_button.grid(row=4, column=2, pady=10, padx=10)
+# decrypt_button.grid(row=4, column=2, pady=10, padx=10)
 
 root.mainloop()
