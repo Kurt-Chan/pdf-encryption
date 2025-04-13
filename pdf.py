@@ -3,11 +3,44 @@ from tkinter import filedialog, messagebox
 import PyPDF2
 import os
     
+
+
+def remove_password(input_pdf, output_pdf, user_password):
+    try:
+            # Open the PDF file
+        with open(input_pdf, 'rb') as file:
+            reader = PyPDF2.PdfReader(file)
+
+            # Check if the PDF is encrypted
+            if reader.is_encrypted:
+                reader.decrypt(user_password)
+
+            # Create a writer object to write changes to a new PDF
+            writer = PyPDF2.PdfWriter()
+
+            # Copy pages from the input PDF to the writer object
+            for page_num in range(len(reader.pages)):
+                writer.add_page(reader.pages[page_num])
+
+            # Write the new PDF without a password
+            with open(output_pdf, 'wb') as output_file:
+                writer.write(output_file)
+
+        return True
+
+    except Exception as e:
+        messagebox.showerror("Decrypt Error", f"An error occurred: {e}")
+        return False
+
 def encrypt_pdf(input_path, output_path, user_password):
     """Encrypts a PDF file with a user password."""
     try:
         with open(input_path, 'rb') as input_file:
             reader = PyPDF2.PdfReader(input_file)
+            if reader.is_encrypted:
+                messagebox.showerror("Encrypt Error", f"File already encrypted.")
+                return False
+            
             writer = PyPDF2.PdfWriter()
 
             for page in reader.pages:
@@ -28,28 +61,52 @@ def browse_file():
     filename = filedialog.askopenfilename(filetypes=[("PDF files", "*.pdf")])
     file_path.set(filename)
 
-    if filename:
-        try:
-            base_name = os.path.basename(filename)
-            name_without_extension = os.path.splitext(base_name)[0]
-            employee_id = name_without_extension.split('_')[0]  # Extract employee ID
-            if len(employee_id) >= 8:
-                 password.set(employee_id)
-                 repeat_password.set(employee_id)
+    # if filename:
+    #     try:
+    #         base_name = os.path.basename(filename)
+    #         name_without_extension = os.path.splitext(base_name)[0]
+    #         employee_id = name_without_extension.split('_')[0]  # Extract employee ID
+    #         if len(employee_id) >= 8:
+    #              password.set(employee_id)
+    #              repeat_password.set(employee_id)
 
-            else:
+    #         else:
 
-                 password.set("Password123")
-                 repeat_password.set("Password123") # if it is less than 8 characters just set it to password123
-        except:
-            password.set("Password123")
-            repeat_password.set("Password123")
+    #              password.set("Password123")
+    #              repeat_password.set("Password123") # if it is less than 8 characters just set it to password123
+    #     except:
+    #         password.set("Password123")
+    #         repeat_password.set("Password123")
 
 def reset_form():
     """Resets the form fields to their initial state."""
     file_path.set("")
     password.set("")
     repeat_password.set("")
+
+def decrypt_file():
+    input_pdf_path = file_path.get()
+    user_password= password.get().strip()
+    repeat_user_password = repeat_password.get().strip()
+
+    if not input_pdf_path:
+        messagebox.showerror("Error", "Please select a PDF file.")
+        return
+    
+    if len(user_password) < 8:
+        messagebox.showerror("Error", "Password must be at least 8 characters long.")
+        return
+
+    if user_password != repeat_user_password:
+        messagebox.showerror("Error", "Passwords do not match.")
+        return
+    
+    if remove_password(input_pdf_path, input_pdf_path, user_password):  # Use input_pdf_path as output_path
+        messagebox.showinfo("Success", f"PDF {os.path.basename(input_pdf_path)} password removed.")
+        reset_form() # Reset the form ONLY on success
+    else:
+        messagebox.showerror("Error", "PDF decryption failed.")    
+    
 
 def process_file():
     """Processes the selected file and adds a password, overwriting the original."""
@@ -127,7 +184,9 @@ show_password_check.grid(row=3, column=1, sticky=tk.W, padx=5, pady=5)
 
 
 # Process Button
-process_button = tk.Button(root, text="Protect PDF", command=process_file)
+process_button = tk.Button(root, text="Encrypt PDF", command=process_file)
+decrypt_button = tk.Button(root, text="Decrypt PDF", command=decrypt_file)
 process_button.grid(row=4, column=1, pady=10)
+decrypt_button.grid(row=4, column=2, pady=10, padx=10)
 
 root.mainloop()
