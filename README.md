@@ -1,4 +1,4 @@
-# 🧾 PDF Payslip Bulk Encryptor
+# 🧾 PDF Payslip Bulk Encryptor fo Pax Asia Information Corporation
 
 A simple GUI-based Python tool to **encrypt multiple PDF files** (like payslips) using passwords from an Excel file.  
 Each encrypted file is saved with a filename format like: **PAXASIA-{LastName}-{FirstName}-{CutOffDate}-PAYSLIP.pdf**
