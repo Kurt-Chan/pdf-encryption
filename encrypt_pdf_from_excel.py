@@ -87,7 +87,7 @@ root.title("PDF Payslip Bulk Encryptor")
 root.resizable(False, False)
 
 # Variables
-excel_file_path = tk.StringVar()
+excel_file_path = tk.StringVar(value=os.path.join(os.getcwd(), "employees.xlsx"))
 output_folder = tk.StringVar(value=os.path.join(os.getcwd(), "output"))
 cutoff_date_txt = tk.StringVar(value="April 1-15")
 
